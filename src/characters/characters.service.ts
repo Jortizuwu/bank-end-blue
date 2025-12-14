@@ -1,3 +1,4 @@
+import { ReactionsService } from './../reactions/reactions.service';
 import { AxiosError } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
@@ -23,16 +24,24 @@ export class CharactersService {
   constructor(
     @InjectModel(Character.name)
     private readonly characterModel: Model<CharacterDocument>,
+    private readonly reactionsService: ReactionsService,
     private readonly httpService: HttpService,
   ) {}
 
-  async createCharacter(body: CreateCharacterDto): Promise<void> {
+  async createCharacter(
+    body: CreateCharacterDto,
+    userId: string,
+  ): Promise<void> {
     const character = await this.characterModel.findOne({
       custom_id: body.custom_id,
     });
 
     if (character) {
-      await this.incrementDislikeOrLike(body.custom_id, body.reactionType);
+      await this.reactionsService.reactToCharacter(
+        userId,
+        body.custom_id,
+        body.reactionType,
+      );
       return;
     }
 

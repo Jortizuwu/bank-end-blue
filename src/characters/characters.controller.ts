@@ -1,7 +1,16 @@
-import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
-// import { ValidationPipe } from 'src/common/pipes/validation.pipe';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('characters')
 export class CharactersController {
@@ -12,8 +21,12 @@ export class CharactersController {
     return this.charactersService.getRandomCharacters();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('create')
-  async create(@Body(new ValidationPipe()) body: CreateCharacterDto) {
-    return this.charactersService.createCharacter(body);
+  async create(
+    @Body(new ValidationPipe()) body: CreateCharacterDto,
+    @Req() req,
+  ) {
+    return this.charactersService.createCharacter(body, req.user.sub as string);
   }
 }

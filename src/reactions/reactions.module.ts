@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { ReactionsService } from './reactions.service';
 import { ReactionsController } from './reactions.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CharactersModule } from 'src/characters/characters.module';
 import { Reaction, ReactionSchema } from './entities/reaction.entity';
-import { HttpModule } from '@nestjs/axios';
+import {
+  Character,
+  CharacterSchema,
+} from 'src/characters/entities/character.entity';
 
 @Module({
   controllers: [ReactionsController],
@@ -13,9 +15,8 @@ import { HttpModule } from '@nestjs/axios';
   imports: [
     MongooseModule.forFeature([
       { name: Reaction.name, schema: ReactionSchema },
+      { name: Character.name, schema: CharacterSchema },
     ]),
-    CharactersModule,
-    HttpModule,
   ],
 })
 export class ReactionsModule {}
