@@ -15,6 +15,6 @@ export class CreateCharacterDto {
   @IsNotEmpty()
   type: TargetType;
 
-  @IsEnum(TargetType)
+  @IsEnum(ReactionType)
   reactionType: ReactionType;
 }

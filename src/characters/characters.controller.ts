@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
-import { ValidationPipe } from 'src/common/pipes/validation.pipe';
+// import { ValidationPipe } from 'src/common/pipes/validation.pipe';
 
 @Controller('characters')
 export class CharactersController {
