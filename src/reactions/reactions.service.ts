@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { CreateReactionDto } from './dto/create-reaction.dto';
-import { UpdateReactionDto } from './dto/update-reaction.dto';
+import { Reaction, ReactionDocument } from './entities/reaction.entity';
+import { ReactionType } from 'src/common/enum';
 
 @Injectable()
 export class ReactionsService {
-  create(createReactionDto: CreateReactionDto) {
-    return 'This action adds a new reaction';
+  constructor(
+    @InjectModel(Reaction.name)
+    private readonly reactionModel: Model<ReactionDocument>,
+  ) {}
+
+  async like(createReactionDto: CreateReactionDto) {
+    const { targetId, targetType } = createReactionDto;
+
+    const existingReaction = await this.reactionModel.findOne({
+      targetId,
+      targetType,
+    });
+
+    if (existingReaction) {
+      if (existingReaction.reaction === ReactionType.LIKE) {
+        throw new ConflictException('Already liked');
+      }
+
+      existingReaction.reaction = ReactionType.LIKE;
+      return existingReaction.save();
+    }
+
+    return this.reactionModel.create({
+      targetId,
+      targetType,
+      reaction: ReactionType.LIKE,
+    });
   }
 
-  findAll() {
-    return `This action returns all reactions`;
-  }
+  async unlike(createReactionDto: CreateReactionDto) {
+    const { targetId, targetType } = createReactionDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} reaction`;
-  }
+    const existingReaction = await this.reactionModel.findOne({
+      targetId,
+      targetType,
+    });
 
-  update(id: number, updateReactionDto: UpdateReactionDto) {
-    return `This action updates a #${id} reaction`;
-  }
+    if (!existingReaction) {
+      throw new NotFoundException('Reaction not found');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} reaction`;
+    if (existingReaction.reaction === ReactionType.UNLIKE) {
+      throw new ConflictException('Already unliked');
+    }
+
+    existingReaction.reaction = ReactionType.UNLIKE;
+    return existingReaction.save();
   }
 }

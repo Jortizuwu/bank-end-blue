@@ -1,7 +1,9 @@
+import { ReactionTargetType } from 'src/common/enum';
+
 export class CharacterDto {
   id: number | string;
   name: string;
   image: string;
-  origin: 'POKEMON' | 'RICK_AND_MORTY' | 'SUPER_HERO';
+  origin: ReactionTargetType;
   extra?: Record<string, any>;
 }

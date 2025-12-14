@@ -1,34 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { ReactionsService } from './reactions.service';
 import { CreateReactionDto } from './dto/create-reaction.dto';
-import { UpdateReactionDto } from './dto/update-reaction.dto';
 
 @Controller('reactions')
 export class ReactionsController {
   constructor(private readonly reactionsService: ReactionsService) {}
-
-  @Post()
-  create(@Body() createReactionDto: CreateReactionDto) {
-    return this.reactionsService.create(createReactionDto);
+  @Post('like')
+  like(@Body() dto: CreateReactionDto) {
+    return this.reactionsService.like(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.reactionsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reactionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReactionDto: UpdateReactionDto) {
-    return this.reactionsService.update(+id, updateReactionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reactionsService.remove(+id);
+  @Post('unlike')
+  unlike(@Body() dto: CreateReactionDto) {
+    return this.reactionsService.unlike(dto);
   }
 }
