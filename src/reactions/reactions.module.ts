@@ -9,6 +9,7 @@ import { HttpModule } from '@nestjs/axios';
 @Module({
   controllers: [ReactionsController],
   providers: [ReactionsService],
+  exports: [ReactionsService],
   imports: [
     MongooseModule.forFeature([
       { name: Reaction.name, schema: ReactionSchema },

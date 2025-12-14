@@ -6,7 +6,8 @@ import { EnvConfiguration } from './common/config/env.config';
 import { CharactersModule } from './characters/characters.module';
 import { ReactionsModule } from './reactions/reactions.module';
 import { APP_PIPE } from '@nestjs/core';
-// import { ValidationPipe } from './common/pipes/validation.pipe';
+import { UsersModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,8 @@ import { APP_PIPE } from '@nestjs/core';
     ),
     CharactersModule,
     ReactionsModule,
+    UsersModule,
+    AuthModule,
   ],
   providers: [
     {

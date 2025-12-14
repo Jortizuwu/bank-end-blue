@@ -34,4 +34,11 @@ export class ReactionsService {
       console.log(error);
     }
   }
+
+  async findByUserAndReaction(userId: string, reaction: ReactionType) {
+    return this.reactionModel.find({
+      userId,
+      reaction,
+    });
+  }
 }
