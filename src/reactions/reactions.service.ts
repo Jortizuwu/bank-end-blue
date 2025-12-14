@@ -1,63 +1,59 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { CreateReactionDto } from './dto/create-reaction.dto';
 import { Reaction, ReactionDocument } from './entities/reaction.entity';
-import { ReactionType } from 'src/common/enum';
+import { ReactionType, TargetType } from 'src/common/enum';
+import { CharactersService } from 'src/characters/characters.service';
 
 @Injectable()
 export class ReactionsService {
   constructor(
     @InjectModel(Reaction.name)
     private readonly reactionModel: Model<ReactionDocument>,
+    private readonly charactersService: CharactersService,
   ) {}
 
-  async like(createReactionDto: CreateReactionDto) {
-    const { targetId, targetType } = createReactionDto;
-
-    const existingReaction = await this.reactionModel.findOne({
+  async react(
+    userId: string,
+    targetId: string,
+    targetType: TargetType,
+    reactionType: ReactionType,
+  ) {
+    const existing = await this.reactionModel.findOne({
+      userId,
       targetId,
       targetType,
     });
 
-    if (existingReaction) {
-      if (existingReaction.reaction === ReactionType.LIKE) {
-        throw new ConflictException('Already liked');
-      }
+    if (!existing) {
+      await this.reactionModel.create({
+        userId,
+        targetId,
+        targetType,
+        reaction: reactionType,
+      });
 
-      existingReaction.reaction = ReactionType.LIKE;
-      return existingReaction.save();
+      // reactionType === ReactionType.LIKE
+      //   ? await this.charactersService.incrementLike(targetId, targetType)
+      //   : await this.charactersService.incrementDislike(targetId, targetType);
+
+      return { reaction: reactionType };
     }
 
-    return this.reactionModel.create({
-      targetId,
-      targetType,
-      reaction: ReactionType.LIKE,
-    });
-  }
-
-  async unlike(createReactionDto: CreateReactionDto) {
-    const { targetId, targetType } = createReactionDto;
-
-    const existingReaction = await this.reactionModel.findOne({
-      targetId,
-      targetType,
-    });
-
-    if (!existingReaction) {
-      throw new NotFoundException('Reaction not found');
+    if (existing.reaction === reactionType) {
+      throw new ConflictException('Reaction already exists');
     }
 
-    if (existingReaction.reaction === ReactionType.UNLIKE) {
-      throw new ConflictException('Already unliked');
+    if (reactionType === ReactionType.LIKE) {
+      await this.charactersService.incrementLike(targetId, targetType);
+    } else {
+      await this.charactersService.incrementDislike(targetId, targetType);
     }
 
-    existingReaction.reaction = ReactionType.UNLIKE;
-    return existingReaction.save();
+    existing.reaction = reactionType;
+    await existing.save();
+
+    return { reaction: reactionType };
   }
 }

@@ -11,22 +11,21 @@ export type CharacterDocument = HydratedDocument<Character>;
 export class Character {
   @Prop({
     required: true,
+    index: true,
+  })
+  custom_id: string;
+
+  @Prop({
+    required: true,
+  })
+  idExternalApi: string;
+
+  @Prop({
+    required: true,
     enum: TargetType,
     index: true,
   })
   type: TargetType;
-
-  @Prop({
-    default: 0,
-    min: 0,
-  })
-  likes: number;
-
-  @Prop({
-    default: 0,
-    min: 0,
-  })
-  dislikes: number;
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);

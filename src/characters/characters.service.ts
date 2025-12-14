@@ -1,20 +1,52 @@
+import { AxiosError } from 'axios';
+import { firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+
+import { Character, CharacterDocument } from './entities/character.entity';
 import { CharacterDto } from './dto/character.dto';
-import { GetPokemonResponse } from 'src/common/interfaces/pokeapi.response';
-import { AxiosError } from 'axios';
-import { RickAndMortyResponse } from 'src/common/interfaces/rickandmorty.response';
-import { HerosResponse } from 'src/common/interfaces/heros.response';
 import { EXTERNAL_API } from 'src/common/apis/external-api';
+import { GetPokemonResponse } from 'src/common/interfaces/pokeapi.response';
+import { HerosResponse } from 'src/common/interfaces/heros.response';
+import { RickAndMortyResponse } from 'src/common/interfaces/rickandmorty.response';
+import { ReactionType, TargetType } from 'src/common/enum';
+import { CreateCharacterDto } from './dto/create-character.dto';
 
 @Injectable()
 export class CharactersService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    @InjectModel(Character.name)
+    private readonly characterModel: Model<CharacterDocument>,
+    private readonly httpService: HttpService,
+  ) {}
+
+  async createCharacter(body: CreateCharacterDto): Promise<void> {
+    const character = await this.characterModel.findOne({
+      custom_id: body.custom_id,
+    });
+
+    if (character) {
+      if (body.reactionType === ReactionType.LIKE) {
+        await this.incrementLike(body.custom_id, body.type);
+        return;
+      }
+
+      await this.incrementDislike(body.custom_id, body.type);
+      return;
+    }
+
+    await this.characterModel.create({
+      type: body.type,
+      idExternalApi: body.idExternalApi,
+      custom_id: `${body.type}_${body.idExternalApi}`,
+    });
+  }
 
   async getRandomCharacters(): Promise<CharacterDto[]> {
     try {
@@ -49,7 +81,7 @@ export class CharactersService {
           id: data.id,
           name: data.name,
           image: data.sprites.front_default,
-          origin: 'POKEMON',
+          origin: TargetType.POKEMON,
           extra: {
             types: data.types.map((t) => t.type.name),
           },
@@ -77,7 +109,7 @@ export class CharactersService {
           id: data.id,
           name: data.name,
           image: data.image,
-          origin: 'RICK_AND_MORTY',
+          origin: TargetType.RICK_AND_MORTY,
           extra: {
             species: data.species,
             status: data.status,
@@ -105,7 +137,7 @@ export class CharactersService {
           id: data.id,
           name: data.name,
           image: data.image.url,
-          origin: 'SUPER_HERO',
+          origin: TargetType.SUPER_HERO,
           extra: {
             powerstats: data.powerstats.power,
           },
@@ -116,6 +148,22 @@ export class CharactersService {
         this.handleExceptions(error);
       }
     });
+  }
+
+  incrementLike(targetId: string, type: TargetType) {
+    return this.characterModel.findOneAndUpdate(
+      { targetId, type },
+      { $inc: { likes: 1 } },
+      { upsert: true },
+    );
+  }
+
+  incrementDislike(targetId: string, type: TargetType) {
+    return this.characterModel.findOneAndUpdate(
+      { targetId, type },
+      { $inc: { dislikes: 1 } },
+      { upsert: true },
+    );
   }
 
   private handleExceptions(error: unknown): never {
