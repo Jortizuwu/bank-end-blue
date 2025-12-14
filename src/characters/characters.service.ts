@@ -18,6 +18,7 @@ import { HerosResponse } from 'src/common/interfaces/heros.response';
 import { RickAndMortyResponse } from 'src/common/interfaces/rickandmorty.response';
 import { ReactionType, TargetType } from 'src/common/enum';
 import { CreateCharacterDto } from './dto/create-character.dto';
+import { ExceptionsService } from 'src/common/exceptions/exceptions.service';
 
 @Injectable()
 export class CharactersService {
@@ -26,30 +27,44 @@ export class CharactersService {
     private readonly characterModel: Model<CharacterDocument>,
     private readonly reactionsService: ReactionsService,
     private readonly httpService: HttpService,
+    private readonly exceptionsService: ExceptionsService,
   ) {}
 
   async createCharacter(
     body: CreateCharacterDto,
     userId: string,
   ): Promise<void> {
-    const character = await this.characterModel.findOne({
-      custom_id: body.custom_id,
-    });
+    try {
+      const character = await this.characterModel.findOne({
+        custom_id: body.custom_id,
+      });
 
-    if (character) {
-      await this.reactionsService.reactToCharacter(
-        userId,
-        body.custom_id,
-        body.reactionType,
-      );
-      return;
+      if (character) {
+        await this.reactionsService.reactToCharacter(
+          userId,
+          body.custom_id,
+          body.reactionType,
+        );
+        return;
+      }
+
+      await this.characterModel.create({
+        type: body.type,
+        idExternalApi: body.idExternalApi,
+        custom_id: `${body.type}_${body.idExternalApi}`,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        this.exceptionsService.internalServerErrorException({
+          message: error.message,
+        });
+        return;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
     }
-
-    await this.characterModel.create({
-      type: body.type,
-      idExternalApi: body.idExternalApi,
-      custom_id: `${body.type}_${body.idExternalApi}`,
-    });
   }
 
   async getRandomCharacters(): Promise<CharacterDto[]> {

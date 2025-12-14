@@ -1,6 +1,10 @@
 // src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './entities/user.entity';
@@ -25,14 +29,38 @@ export class UsersService {
         username,
         password: hashed,
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        this.exceptionsService.badRequestException({
+          message: error.message,
+        });
+        return;
+      }
+
       this.exceptionsService.internalServerErrorException({
-        message: 'Error creating user',
+        message: 'internal server error',
       });
     }
   }
 
   async findByUsername(username: string) {
-    return this.userModel.findOne({ username });
+    try {
+      const user = await this.userModel.findOne({ username });
+
+      if (!user) throw new BadRequestException('User not found');
+
+      return user;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        this.exceptionsService.badRequestException({
+          message: error.message,
+        });
+        return;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
+    }
   }
 }

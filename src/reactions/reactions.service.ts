@@ -7,6 +7,7 @@ import {
 import { Model } from 'mongoose';
 import { ReactionType } from 'src/common/enum';
 import { Injectable } from '@nestjs/common';
+import { ExceptionsService } from 'src/common/exceptions/exceptions.service';
 
 @Injectable()
 export class ReactionsService {
@@ -16,6 +17,7 @@ export class ReactionsService {
 
     @InjectModel(Character.name)
     private readonly characterModel: Model<CharacterDocument>,
+    private readonly exceptionsService: ExceptionsService,
   ) {}
 
   async reactToCharacter(
@@ -23,37 +25,67 @@ export class ReactionsService {
     characterCustomId: string,
     reaction: ReactionType,
   ) {
-    const character = await this.characterModel.findOne({
-      custom_id: characterCustomId,
-    });
+    try {
+      const character = await this.characterModel.findOne({
+        custom_id: characterCustomId,
+      });
 
-    // const reactionExists = await this.reactionModel.findOne({
-    //   userId,
-    //   custom_id: characterCustomId,
-    // });
+      // const reactionExists = await this.reactionModel.findOne({
+      //   userId,
+      //   custom_id: characterCustomId,
+      // });
 
-    if (!character) {
-      throw new Error('Character does not exist');
+      if (!character) {
+        throw new Error('Character does not exist');
+      }
+
+      await this.reactionModel.create({
+        userId,
+        reaction,
+        custom_id: characterCustomId,
+      });
+
+      await this.characterModel.updateOne(
+        { custom_id: characterCustomId },
+        {
+          $inc:
+            reaction === ReactionType.LIKE
+              ? { likesCount: 1 }
+              : { dislikesCount: 1 },
+        },
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        this.exceptionsService.internalServerErrorException({
+          message: error.message,
+        });
+        return;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
     }
-
-    await this.reactionModel.create({
-      userId,
-      reaction,
-      custom_id: characterCustomId,
-    });
-
-    await this.characterModel.updateOne(
-      { custom_id: characterCustomId },
-      {
-        $inc:
-          reaction === ReactionType.LIKE
-            ? { likesCount: 1 }
-            : { dislikesCount: 1 },
-      },
-    );
   }
 
   async findByUserAndReaction(userId: string, reaction: ReactionType) {
-    return this.reactionModel.find({ userId, reaction });
+    try {
+      const reactions = await this.reactionModel.find({ userId, reaction });
+
+      if (!reactions) throw new Error('Reactions not found');
+
+      return reactions;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.exceptionsService.internalServerErrorException({
+          message: error.message,
+        });
+        return;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
+    }
   }
 }
