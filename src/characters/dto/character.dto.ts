@@ -1,9 +1,9 @@
-import { ReactionTargetType } from 'src/common/enum';
+import { TargetType } from 'src/common/enum';
 
 export class CharacterDto {
   id: number | string;
   name: string;
   image: string;
-  origin: ReactionTargetType;
+  origin: TargetType;
   extra?: Record<string, any>;
 }

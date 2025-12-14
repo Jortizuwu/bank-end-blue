@@ -1,5 +1,5 @@
 import { IsEnum, IsString } from 'class-validator';
-import { ReactionTargetType } from 'src/common/enum';
+import { TargetType } from 'src/common/enum';
 
 export class CreateReactionDto {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -7,6 +7,6 @@ export class CreateReactionDto {
   targetId: string;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  @IsEnum(ReactionTargetType)
-  targetType: ReactionTargetType;
+  @IsEnum(TargetType)
+  targetType: TargetType;
 }

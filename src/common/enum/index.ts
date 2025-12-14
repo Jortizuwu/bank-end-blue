@@ -3,7 +3,7 @@ export enum ReactionType {
   UNLIKE = 'UNLIKE',
 }
 
-export enum ReactionTargetType {
+export enum TargetType {
   POKEMON = 'POKEMON',
   RICK_AND_MORTY = 'RICK_AND_MORTY',
   SUPER_HERO = 'SUPER_HERO',
