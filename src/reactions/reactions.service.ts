@@ -88,4 +88,28 @@ export class ReactionsService {
       });
     }
   }
+
+  async getLastReactedCharacter() {
+    try {
+      const reaction = await this.reactionModel
+        .findOne({ createdAt: { $exists: true } })
+        .sort({ createdAt: -1 })
+        .exec();
+
+      if (!reaction) throw new Error('No reactions found');
+
+      return reaction;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.exceptionsService.internalServerErrorException({
+          message: error.message,
+        });
+        return null;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
+    }
+  }
 }

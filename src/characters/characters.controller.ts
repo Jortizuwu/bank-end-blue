@@ -21,6 +21,16 @@ export class CharactersController {
     return this.charactersService.getRandomCharacters();
   }
 
+  @Get('most-liked')
+  getMostLiked() {
+    return this.charactersService.getMostLikedCharacter();
+  }
+
+  @Get('most-disliked')
+  getMostDisliked() {
+    return this.charactersService.getMostDislikedCharacter();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('create')
   async create(

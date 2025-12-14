@@ -7,12 +7,14 @@ import {
   Character,
   CharacterSchema,
 } from 'src/characters/entities/character.entity';
+import { ExceptionsModule } from 'src/common/exceptions/exceptions.module';
 
 @Module({
   controllers: [ReactionsController],
   providers: [ReactionsService],
   exports: [ReactionsService],
   imports: [
+    ExceptionsModule,
     MongooseModule.forFeature([
       { name: Reaction.name, schema: ReactionSchema },
       { name: Character.name, schema: CharacterSchema },

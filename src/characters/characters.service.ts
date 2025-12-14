@@ -8,6 +8,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { Character, CharacterDocument } from './entities/character.entity';
@@ -53,6 +54,86 @@ export class CharactersService {
         idExternalApi: body.idExternalApi,
         custom_id: `${body.type}_${body.idExternalApi}`,
       });
+    } catch (error) {
+      if (error instanceof Error) {
+        this.exceptionsService.internalServerErrorException({
+          message: error.message,
+        });
+        return;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
+    }
+  }
+
+  async getMostLikedCharacter() {
+    try {
+      const character = await this.characterModel
+        .findOne()
+        .sort({ likesCount: -1 })
+        .exec();
+
+      if (!character) {
+        throw new NotFoundException('No characters found');
+      }
+
+      return character;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.exceptionsService.internalServerErrorException({
+          message: error.message,
+        });
+        return;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
+    }
+  }
+
+  async getMostDislikedCharacter() {
+    try {
+      const character = await this.characterModel
+        .findOne()
+        .sort({ dislikesCount: -1 })
+        .exec();
+
+      if (!character) {
+        throw new NotFoundException('No characters found');
+      }
+
+      return character;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.exceptionsService.internalServerErrorException({
+          message: error.message,
+        });
+        return;
+      }
+
+      this.exceptionsService.internalServerErrorException({
+        message: 'internal server error',
+      });
+    }
+  }
+
+  async findCharacterByName(name: string) {
+    try {
+      const character = await this.characterModel
+        .findOne({
+          name,
+        })
+        .sort({ dislikesCount: -1 })
+        .exec();
+
+      if (!character) {
+        throw new NotFoundException('No characters found');
+      }
+
+      return character;
     } catch (error) {
       if (error instanceof Error) {
         this.exceptionsService.internalServerErrorException({
