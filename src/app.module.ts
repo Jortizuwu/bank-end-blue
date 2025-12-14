@@ -8,6 +8,8 @@ import { ReactionsModule } from './reactions/reactions.module';
 import { APP_PIPE } from '@nestjs/core';
 import { UsersModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ExceptionsModule } from './common/exceptions/exceptions.module';
+import { ExceptionsService } from './common/exceptions/exceptions.service';
 
 @Module({
   imports: [
@@ -22,12 +24,14 @@ import { AuthModule } from './auth/auth.module';
     ReactionsModule,
     UsersModule,
     AuthModule,
+    ExceptionsModule,
   ],
   providers: [
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
     },
+    ExceptionsService,
   ],
 })
 export class AppModule {}

@@ -4,12 +4,14 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './entities/user.entity';
+import { ExceptionsService } from 'src/common/exceptions/exceptions.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
+    private readonly exceptionsService: ExceptionsService,
   ) {}
 
   async create(username: string, password: string) {
@@ -23,8 +25,10 @@ export class UsersService {
         username,
         password: hashed,
       });
-    } catch (error) {
-      console.log(error);
+    } catch {
+      this.exceptionsService.internalServerErrorException({
+        message: 'Error creating user',
+      });
     }
   }
 
