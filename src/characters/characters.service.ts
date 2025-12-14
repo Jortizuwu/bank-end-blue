@@ -32,12 +32,7 @@ export class CharactersService {
     });
 
     if (character) {
-      if (body.reactionType === ReactionType.LIKE) {
-        await this.incrementLike(body.custom_id, body.type);
-        return;
-      }
-
-      await this.incrementDislike(body.custom_id, body.type);
+      await this.incrementDislikeOrLike(body.custom_id, body.reactionType);
       return;
     }
 
@@ -150,18 +145,15 @@ export class CharactersService {
     });
   }
 
-  incrementLike(targetId: string, type: TargetType) {
+  incrementDislikeOrLike(custom_id: string, reaction: ReactionType) {
     return this.characterModel.findOneAndUpdate(
-      { targetId, type },
-      { $inc: { likes: 1 } },
-      { upsert: true },
-    );
-  }
-
-  incrementDislike(targetId: string, type: TargetType) {
-    return this.characterModel.findOneAndUpdate(
-      { targetId, type },
-      { $inc: { dislikes: 1 } },
+      { custom_id },
+      {
+        $inc:
+          reaction === ReactionType.LIKE
+            ? { likesCount: 1 }
+            : { dislikesCount: 1 },
+      },
       { upsert: true },
     );
   }

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { TargetType, ReactionType } from 'src/common/enum';
+import { ReactionType } from 'src/common/enum';
 
 export type ReactionDocument = HydratedDocument<Reaction>;
 
@@ -9,9 +9,7 @@ export type ReactionDocument = HydratedDocument<Reaction>;
   versionKey: false,
 })
 export class Reaction {
-  @Prop({
-    required: true,
-  })
+  @Prop({ required: true })
   userId: string;
 
   @Prop({
@@ -20,21 +18,8 @@ export class Reaction {
   })
   reaction: ReactionType;
 
-  @Prop({
-    required: true,
-  })
-  targetId: string;
-
-  @Prop({
-    required: true,
-    enum: TargetType,
-  })
-  targetType: TargetType;
+  @Prop({ required: true, index: true })
+  custom_id: string;
 }
 
 export const ReactionSchema = SchemaFactory.createForClass(Reaction);
-
-ReactionSchema.index(
-  { userId: 1, targetId: 1, targetType: 1 },
-  { unique: true },
-);

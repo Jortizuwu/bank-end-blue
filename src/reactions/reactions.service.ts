@@ -1,9 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Reaction, ReactionDocument } from './entities/reaction.entity';
-import { ReactionType, TargetType } from 'src/common/enum';
+import { ReactionType } from 'src/common/enum';
 import { CharactersService } from 'src/characters/characters.service';
 
 @Injectable()
@@ -14,46 +14,24 @@ export class ReactionsService {
     private readonly charactersService: CharactersService,
   ) {}
 
-  async react(
+  async reactToCharacter(
     userId: string,
-    targetId: string,
-    targetType: TargetType,
-    reactionType: ReactionType,
+    characterCustomId: string,
+    reaction: ReactionType,
   ) {
-    const existing = await this.reactionModel.findOne({
-      userId,
-      targetId,
-      targetType,
-    });
-
-    if (!existing) {
+    try {
       await this.reactionModel.create({
         userId,
-        targetId,
-        targetType,
-        reaction: reactionType,
+        reaction,
+        custom_id: characterCustomId,
       });
 
-      // reactionType === ReactionType.LIKE
-      //   ? await this.charactersService.incrementLike(targetId, targetType)
-      //   : await this.charactersService.incrementDislike(targetId, targetType);
-
-      return { reaction: reactionType };
+      await this.charactersService.incrementDislikeOrLike(
+        characterCustomId,
+        reaction,
+      );
+    } catch (error) {
+      console.log(error);
     }
-
-    if (existing.reaction === reactionType) {
-      throw new ConflictException('Reaction already exists');
-    }
-
-    if (reactionType === ReactionType.LIKE) {
-      await this.charactersService.incrementLike(targetId, targetType);
-    } else {
-      await this.charactersService.incrementDislike(targetId, targetType);
-    }
-
-    existing.reaction = reactionType;
-    await existing.save();
-
-    return { reaction: reactionType };
   }
 }

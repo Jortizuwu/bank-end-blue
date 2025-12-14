@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ReactionType, TargetType } from 'src/common/enum';
 

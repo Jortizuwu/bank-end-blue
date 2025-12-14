@@ -26,6 +26,12 @@ export class Character {
     index: true,
   })
   type: TargetType;
+
+  @Prop({ default: 0 })
+  likesCount: number;
+
+  @Prop({ default: 0 })
+  dislikesCount: number;
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);
