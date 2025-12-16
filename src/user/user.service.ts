@@ -1,9 +1,9 @@
-// src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
 import {
   Injectable,
   ConflictException,
   BadRequestException,
+  HttpException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -35,17 +35,12 @@ export class UsersService {
         message: 'User created successfully',
       };
     } catch (error) {
-      console.log(error);
-
-      if (error instanceof ConflictException) {
-        this.exceptionsService.badRequestException({
-          message: error.message,
-        });
-        return;
+      if (error instanceof HttpException) {
+        throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }
@@ -58,15 +53,12 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        this.exceptionsService.badRequestException({
-          message: error.message,
-        });
-        return;
+      if (error instanceof HttpException) {
+        throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }

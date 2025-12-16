@@ -6,7 +6,12 @@ import {
 } from 'src/characters/entities/character.entity';
 import { Model } from 'mongoose';
 import { ReactionType } from 'src/common/enum';
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ExceptionsService } from 'src/common/exceptions/exceptions.service';
 
 @Injectable()
@@ -47,7 +52,7 @@ export class ReactionsService {
       );
 
       if (result.upsertedCount === 0) {
-        return;
+        throw new ConflictException('Reaction already exists by user');
       }
 
       await this.characterModel.updateOne(
@@ -60,9 +65,12 @@ export class ReactionsService {
         },
       );
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       this.exceptionsService.internalServerErrorException({
-        message:
-          error instanceof Error ? error.message : 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }
@@ -71,19 +79,16 @@ export class ReactionsService {
     try {
       const reactions = await this.reactionModel.find({ userId, reaction });
 
-      if (!reactions) throw new Error('Reactions not found');
+      if (!reactions) throw new NotFoundException('Reactions not found');
 
       return reactions;
     } catch (error) {
-      if (error instanceof Error) {
-        this.exceptionsService.internalServerErrorException({
-          message: error.message,
-        });
-        return;
+      if (error instanceof HttpException) {
+        throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }
@@ -95,19 +100,16 @@ export class ReactionsService {
         .sort({ createdAt: -1 })
         .exec();
 
-      if (!reaction) throw new Error('No reactions found');
+      if (!reaction) throw new NotFoundException('No reactions found');
 
       return reaction;
     } catch (error) {
-      if (error instanceof Error) {
-        this.exceptionsService.internalServerErrorException({
-          message: error.message,
-        });
-        return null;
+      if (error instanceof HttpException) {
+        throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }

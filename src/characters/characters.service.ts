@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -56,9 +57,12 @@ export class CharactersService {
         body.reactionType,
       );
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       this.exceptionsService.internalServerErrorException({
-        message:
-          error instanceof Error ? error.message : 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }
@@ -76,15 +80,12 @@ export class CharactersService {
 
       return character;
     } catch (error) {
-      if (error instanceof Error) {
-        this.exceptionsService.internalServerErrorException({
-          message: error.message,
-        });
-        return;
+      if (error instanceof HttpException) {
+        throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }
@@ -102,15 +103,12 @@ export class CharactersService {
 
       return character;
     } catch (error) {
-      if (error instanceof Error) {
-        this.exceptionsService.internalServerErrorException({
-          message: error.message,
-        });
-        return;
+      if (error instanceof HttpException) {
+        throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }
@@ -130,15 +128,12 @@ export class CharactersService {
 
       return character;
     } catch (error) {
-      if (error instanceof Error) {
-        this.exceptionsService.internalServerErrorException({
-          message: error.message,
-        });
-        return;
+      if (error instanceof HttpException) {
+        throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message: 'Unexpected error while reacting to character',
       });
     }
   }
