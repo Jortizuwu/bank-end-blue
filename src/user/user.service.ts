@@ -23,12 +23,20 @@ export class UsersService {
       const exists = await this.userModel.exists({ username });
       if (exists) throw new ConflictException('User already exists');
 
-      await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = new this.userModel({
+        username,
+        password: hashedPassword,
+      });
+      await newUser.save();
 
       return {
         message: 'User created successfully',
       };
     } catch (error) {
+      console.log(error);
+
       if (error instanceof ConflictException) {
         this.exceptionsService.badRequestException({
           message: error.message,
