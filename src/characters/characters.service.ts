@@ -38,17 +38,17 @@ export class CharactersService {
     const customId = `${body.type}_${body.idExternalApi}`;
 
     try {
-      const character = await this.characterModel.findOne({
-        custom_id: customId,
-      });
-
-      if (!character) {
-        await this.characterModel.create({
-          type: body.type,
-          idExternalApi: body.idExternalApi,
-          custom_id: customId,
-        });
-      }
+      await this.characterModel.updateOne(
+        { custom_id: customId },
+        {
+          $setOnInsert: {
+            type: body.type,
+            idExternalApi: body.idExternalApi,
+            custom_id: customId,
+          },
+        },
+        { upsert: true },
+      );
 
       await this.reactionsService.reactToCharacter(
         userId,

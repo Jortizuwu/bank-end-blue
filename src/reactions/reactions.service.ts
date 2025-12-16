@@ -30,20 +30,25 @@ export class ReactionsService {
         custom_id: characterCustomId,
       });
 
-      // const reactionExists = await this.reactionModel.findOne({
-      //   userId,
-      //   custom_id: characterCustomId,
-      // });
-
       if (!character) {
         throw new Error('Character does not exist');
       }
 
-      await this.reactionModel.create({
-        userId,
-        reaction,
-        custom_id: characterCustomId,
-      });
+      const result = await this.reactionModel.updateOne(
+        { userId, custom_id: characterCustomId },
+        {
+          $setOnInsert: {
+            userId,
+            custom_id: characterCustomId,
+            reaction,
+          },
+        },
+        { upsert: true },
+      );
+
+      if (result.upsertedCount === 0) {
+        return;
+      }
 
       await this.characterModel.updateOne(
         { custom_id: characterCustomId },
@@ -55,15 +60,9 @@ export class ReactionsService {
         },
       );
     } catch (error) {
-      if (error instanceof Error) {
-        this.exceptionsService.internalServerErrorException({
-          message: error.message,
-        });
-        return;
-      }
-
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message:
+          error instanceof Error ? error.message : 'internal server error',
       });
     }
   }

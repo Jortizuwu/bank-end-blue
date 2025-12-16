@@ -23,3 +23,5 @@ export class Reaction {
 }
 
 export const ReactionSchema = SchemaFactory.createForClass(Reaction);
+
+ReactionSchema.index({ userId: 1, custom_id: 1 }, { unique: true });
