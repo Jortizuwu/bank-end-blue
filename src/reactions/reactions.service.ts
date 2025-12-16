@@ -77,18 +77,38 @@ export class ReactionsService {
 
   async findByUserAndReaction(userId: string, reaction: ReactionType) {
     try {
-      const reactions = await this.reactionModel.find({ userId, reaction });
+      const reactions = await this.reactionModel.aggregate([
+        {
+          $match: {
+            userId,
+            reaction,
+          },
+        },
+        {
+          $lookup: {
+            from: 'characters',
+            localField: 'custom_id',
+            foreignField: 'custom_id',
+            as: 'character',
+          },
+        },
+        {
+          $unwind: '$character',
+        },
+      ]);
 
-      if (!reactions) throw new NotFoundException('Reactions not found');
+      if (reactions.length === 0) {
+        throw new NotFoundException('Reactions not found');
+      }
 
-      return reactions;
+      return reactions as Character[];
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'Unexpected error while reacting to character',
+        message: 'Unexpected error while fetching reactions',
       });
     }
   }
