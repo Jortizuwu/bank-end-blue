@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { ReactionsService } from '../reactions/reactions.service';
@@ -18,11 +27,11 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':userId/reaction/:type/characters')
-  async reactedCharacters(
-    @Param('userId') userId: string,
-    @Param('type') type: ReactionType,
-  ) {
-    return this.reactionsService.findByUserAndReaction(userId, type);
+  @Get('reaction/:type/characters')
+  async reactedCharacters(@Param('type') type: ReactionType, @Req() req) {
+    return this.reactionsService.findByUserAndReaction(
+      req.user.sub as string,
+      type,
+    );
   }
 }
