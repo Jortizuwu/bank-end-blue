@@ -35,35 +35,30 @@ export class CharactersService {
     body: CreateCharacterDto,
     userId: string,
   ): Promise<void> {
+    const customId = `${body.type}_${body.idExternalApi}`;
+
     try {
       const character = await this.characterModel.findOne({
-        custom_id: body.custom_id,
+        custom_id: customId,
       });
 
-      if (character) {
-        await this.reactionsService.reactToCharacter(
-          userId,
-          body.custom_id,
-          body.reactionType,
-        );
-        return;
-      }
-
-      await this.characterModel.create({
-        type: body.type,
-        idExternalApi: body.idExternalApi,
-        custom_id: `${body.type}_${body.idExternalApi}`,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        this.exceptionsService.internalServerErrorException({
-          message: error.message,
+      if (!character) {
+        await this.characterModel.create({
+          type: body.type,
+          idExternalApi: body.idExternalApi,
+          custom_id: customId,
         });
-        return;
       }
 
+      await this.reactionsService.reactToCharacter(
+        userId,
+        customId,
+        body.reactionType,
+      );
+    } catch (error) {
       this.exceptionsService.internalServerErrorException({
-        message: 'internal server error',
+        message:
+          error instanceof Error ? error.message : 'internal server error',
       });
     }
   }
@@ -148,106 +143,98 @@ export class CharactersService {
     }
   }
 
-  async getRandomCharacters(): Promise<CharacterDto[]> {
+  async getRandomCharacters(): Promise<CharacterDto> {
     try {
-      const pokemons = this.getRandomPokemons(10);
-      const rickAndMorty = this.getRandomRickAndMorty(10);
-      const superHeroes = this.getRandomSuperHeroes(10);
+      const random = Math.floor(Math.random() * 3);
 
-      const results = await Promise.all([
-        ...pokemons,
-        ...rickAndMorty,
-        ...superHeroes,
-      ]);
-
-      return results.sort(() => Math.random() - 0.5);
+      switch (random) {
+        case 0:
+          return await this.getRandomPokemons();
+        case 1:
+          return await this.getRandomRickAndMorty();
+        case 2:
+        default:
+          return await this.getRandomSuperHeroes();
+      }
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  private getRandomPokemons(amount: number) {
-    return Array.from({ length: amount }).map(async () => {
-      const id = Math.floor(Math.random() * 1010) + 1;
+  private async getRandomPokemons(): Promise<CharacterDto> {
+    const id = Math.floor(Math.random() * 1010) + 1;
 
-      try {
-        const { data } = await firstValueFrom(
-          this.httpService.get<GetPokemonResponse>(
-            `${EXTERNAL_API.POKEMON}/${id}`,
-          ),
-        );
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get<GetPokemonResponse>(
+          `${EXTERNAL_API.POKEMON}/${id}`,
+        ),
+      );
 
-        const response: CharacterDto = {
-          id: data.id,
-          name: data.name,
-          image: data.sprites.front_default,
-          origin: TargetType.POKEMON,
-          extra: {
-            types: data.types.map((t) => t.type.name),
-          },
-        };
-
-        return response;
-      } catch (error) {
-        this.handleExceptions(error);
-      }
-    });
+      return {
+        id: String(data.id),
+        name: data.name,
+        image: data.sprites.front_default,
+        origin: TargetType.POKEMON,
+        extra: {
+          types: data.types.map((t) => t.type.name),
+        },
+      };
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
-  private getRandomRickAndMorty(amount: number) {
-    return Array.from({ length: amount }).map(async () => {
-      const id = Math.floor(Math.random() * 826) + 1;
+  private async getRandomRickAndMorty(): Promise<CharacterDto> {
+    const id = Math.floor(Math.random() * 826) + 1;
 
-      try {
-        const { data } = await firstValueFrom(
-          this.httpService.get<RickAndMortyResponse>(
-            `${EXTERNAL_API.RICK_AND_MORTY}/${id}`,
-          ),
-        );
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get<RickAndMortyResponse>(
+          `${EXTERNAL_API.RICK_AND_MORTY}/${id}`,
+        ),
+      );
 
-        const response: CharacterDto = {
-          id: data.id,
-          name: data.name,
-          image: data.image,
-          origin: TargetType.RICK_AND_MORTY,
-          extra: {
-            species: data.species,
-            status: data.status,
-          },
-        };
+      const response: CharacterDto = {
+        id: String(data.id),
+        name: data.name,
+        image: data.image,
+        origin: TargetType.RICK_AND_MORTY,
+        extra: {
+          species: data.species,
+          status: data.status,
+        },
+      };
 
-        return response;
-      } catch (error) {
-        this.handleExceptions(error);
-      }
-    });
+      return response;
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
-  private getRandomSuperHeroes(amount: number) {
-    return Array.from({ length: amount }).map(async () => {
-      const id = Math.floor(Math.random() * 731) + 1;
-      try {
-        const { data } = await firstValueFrom(
-          this.httpService.get<HerosResponse>(
-            `${EXTERNAL_API.SUPER_HEROES}/${process.env.HERO_TOKEN}/${id}`,
-          ),
-        );
+  private async getRandomSuperHeroes(): Promise<CharacterDto> {
+    const id = Math.floor(Math.random() * 731) + 1;
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get<HerosResponse>(
+          `${EXTERNAL_API.SUPER_HEROES}/${process.env.HERO_TOKEN}/${id}`,
+        ),
+      );
 
-        const response: CharacterDto = {
-          id: data.id,
-          name: data.name,
-          image: data.image.url,
-          origin: TargetType.SUPER_HERO,
-          extra: {
-            powerstats: data.powerstats.power,
-          },
-        };
+      const response: CharacterDto = {
+        id: String(data.id),
+        name: data.name,
+        image: data.image.url,
+        origin: TargetType.SUPER_HERO,
+        extra: {
+          powerstats: data.powerstats.power,
+        },
+      };
 
-        return response;
-      } catch (error) {
-        this.handleExceptions(error);
-      }
-    });
+      return response;
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
   incrementDislikeOrLike(custom_id: string, reaction: ReactionType) {
