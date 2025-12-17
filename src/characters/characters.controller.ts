@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   UseGuards,
   ValidationPipe,
@@ -29,6 +30,11 @@ export class CharactersController {
   @Get('most-disliked')
   getMostDisliked() {
     return this.charactersService.getMostDislikedCharacter();
+  }
+
+  @Get('search')
+  findCharacterByName(@Query('name') name: string) {
+    return this.charactersService.findCharacterByName(name);
   }
 
   @UseGuards(JwtAuthGuard)

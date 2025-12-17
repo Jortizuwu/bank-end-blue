@@ -121,7 +121,6 @@ export class CharactersService {
         .findOne({
           name,
         })
-        .sort({ dislikesCount: -1 })
         .exec();
 
       if (!character) {
