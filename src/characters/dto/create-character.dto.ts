@@ -12,4 +12,12 @@ export class CreateCharacterDto {
 
   @IsEnum(ReactionType)
   reactionType: ReactionType;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  image: string;
 }

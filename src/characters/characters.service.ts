@@ -46,6 +46,8 @@ export class CharactersService {
             type: body.type,
             idExternalApi: body.idExternalApi,
             custom_id: customId,
+            name: body.name,
+            image: body.image,
           },
         },
         { upsert: true },

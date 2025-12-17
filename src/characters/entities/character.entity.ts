@@ -27,6 +27,16 @@ export class Character {
   })
   type: TargetType;
 
+  @Prop({
+    required: true,
+  })
+  name: string;
+
+  @Prop({
+    required: true,
+  })
+  image: string;
+
   @Prop({ default: 0 })
   likesCount: number;
 
