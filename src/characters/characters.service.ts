@@ -21,6 +21,7 @@ import { RickAndMortyResponse } from 'src/common/interfaces/rickandmorty.respons
 import { ReactionType, TargetType } from 'src/common/enum';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { ExceptionsService } from 'src/common/exceptions/exceptions.service';
+import { AnimeResponse } from 'src/common/interfaces/anime.response';
 
 @Injectable()
 export class CharactersService {
@@ -141,7 +142,7 @@ export class CharactersService {
 
   async getRandomCharacters(): Promise<CharacterDto> {
     try {
-      const random = Math.floor(Math.random() * 3);
+      const random = Math.floor(Math.random() * 4);
 
       switch (random) {
         case 0:
@@ -149,8 +150,10 @@ export class CharactersService {
         case 1:
           return await this.getRandomRickAndMorty();
         case 2:
-        default:
           return await this.getRandomSuperHeroes();
+        case 3:
+        default:
+          return await this.getRandomAnime();
       }
     } catch (error) {
       this.handleExceptions(error);
@@ -228,6 +231,25 @@ export class CharactersService {
       };
 
       return response;
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
+
+  private async getRandomAnime(): Promise<CharacterDto> {
+    try {
+      const {
+        data: { data },
+      } = await firstValueFrom(
+        this.httpService.get<AnimeResponse>(`${EXTERNAL_API.ANIME}`),
+      );
+
+      return {
+        id: String(data.mal_id),
+        name: data.name,
+        image: data.images.webp.image_url,
+        origin: TargetType.ANIME,
+      };
     } catch (error) {
       this.handleExceptions(error);
     }
