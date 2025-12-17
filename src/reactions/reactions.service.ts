@@ -115,20 +115,44 @@ export class ReactionsService {
   async getLastReactedCharacter() {
     try {
       const reaction = await this.reactionModel
-        .findOne({ createdAt: { $exists: true } })
+        .findOne()
         .sort({ createdAt: -1 })
+        .lean()
         .exec();
 
-      if (!reaction) throw new NotFoundException('No reactions found');
+      if (!reaction) {
+        throw new NotFoundException('No reactions found');
+      }
 
-      return reaction;
+      const character = await this.characterModel
+        .findOne({ custom_id: reaction.custom_id })
+        .lean()
+        .exec();
+
+      if (!character) {
+        throw new NotFoundException(
+          `Character with custom_id ${reaction.custom_id} not found`,
+        );
+      }
+
+      return {
+        _id: reaction._id,
+        custom_id: character.custom_id,
+        idExternalApi: character.idExternalApi,
+        type: character.type,
+        name: character.name,
+        image: character.image,
+        reactionType: reaction.reaction,
+        dislikesCount: character.dislikesCount,
+        likesCount: character.likesCount,
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
       }
 
       this.exceptionsService.internalServerErrorException({
-        message: 'Unexpected error while reacting to character',
+        message: 'Unexpected error while getting last reacted character',
       });
     }
   }
