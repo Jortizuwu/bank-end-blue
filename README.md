@@ -30,6 +30,23 @@ yarn install
 npm install
 ```
 
+## 🔐 Environment Variables
+
+This project uses environment variables to configure the database and application settings.
+
+Create a `.env` file in the root of the project with the following variables:
+
+```env
+MONGODB=mongodb://root:example@localhost:27017/?authSource=admin
+PORT=3000
+HERO_TOKEN=1111111111111111
+JWT_SECRET=supersecretS
+```
+
+> ⚠️ **Important**: Do not commit the `.env` file to the repository. Use a `.env.example` instead.
+
+---
+
 Start the development server:
 
 ```bash
@@ -60,23 +77,6 @@ This will start:
 
 - MongoDB
 - NestJS API
-
----
-
-## 🔐 Environment Variables
-
-This project uses environment variables to configure the database and application settings.
-
-Create a `.env` file in the root of the project with the following variables:
-
-```env
-MONGODB=mongodb://root:example@localhost:27017/?authSource=admin
-PORT=3000
-HERO_TOKEN=1111111111111111
-JWT_SECRET=supersecretS
-```
-
-> ⚠️ **Important**: Do not commit the `.env` file to the repository. Use a `.env.example` instead.
 
 ---
 
