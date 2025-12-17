@@ -75,13 +75,12 @@ export class ReactionsService {
     }
   }
 
-  async findByUserAndReaction(userId: string, reaction: ReactionType) {
+  async listReactionsByUserId(userId: string) {
     try {
       const reactions = await this.reactionModel.aggregate([
         {
           $match: {
             userId,
-            reaction,
           },
         },
         {
