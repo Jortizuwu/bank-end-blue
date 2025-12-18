@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { ReactionsService } from '../reactions/reactions.service';
 import { UsersService } from './user.service';
 

@@ -6,8 +6,8 @@ import { Reaction, ReactionSchema } from './entities/reaction.entity';
 import {
   Character,
   CharacterSchema,
-} from 'src/characters/entities/character.entity';
-import { ExceptionsModule } from 'src/common/exceptions/exceptions.module';
+} from '../characters/entities/character.entity';
+import { ExceptionsModule } from '../common/exceptions/exceptions.module';
 
 @Module({
   controllers: [ReactionsController],

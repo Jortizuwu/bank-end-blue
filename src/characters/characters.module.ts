@@ -5,9 +5,9 @@ import { HttpModule } from '@nestjs/axios';
 import { CharactersService } from './characters.service';
 import { CharactersController } from './characters.controller';
 import { Character, CharacterSchema } from './entities/character.entity';
-import { ReactionsModule } from 'src/reactions/reactions.module';
-import { AuthModule } from 'src/auth/auth.module';
-import { ExceptionsModule } from 'src/common/exceptions/exceptions.module';
+import { ReactionsModule } from '../reactions/reactions.module';
+import { AuthModule } from '../auth/auth.module';
+import { ExceptionsModule } from '../common/exceptions/exceptions.module';
 
 @Module({
   imports: [

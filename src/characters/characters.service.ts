@@ -14,14 +14,14 @@ import {
 
 import { Character, CharacterDocument } from './entities/character.entity';
 import { CharacterDto } from './dto/character.dto';
-import { EXTERNAL_API } from 'src/common/apis/external-api';
-import { GetPokemonResponse } from 'src/common/interfaces/pokeapi.response';
-import { HerosResponse } from 'src/common/interfaces/heros.response';
-import { RickAndMortyResponse } from 'src/common/interfaces/rickandmorty.response';
-import { ReactionType, TargetType } from 'src/common/enum';
+import { EXTERNAL_API } from '../common/apis/external-api';
+import { GetPokemonResponse } from '../common/interfaces/pokeapi.response';
+import { HerosResponse } from '../common/interfaces/heros.response';
+import { RickAndMortyResponse } from '../common/interfaces/rickandmorty.response';
+import { ReactionType, TargetType } from '../common/enum';
 import { CreateCharacterDto } from './dto/create-character.dto';
-import { ExceptionsService } from 'src/common/exceptions/exceptions.service';
-import { AnimeResponse } from 'src/common/interfaces/anime.response';
+import { ExceptionsService } from '../common/exceptions/exceptions.service';
+import { AnimeResponse } from '../common/interfaces/anime.response';
 
 @Injectable()
 export class CharactersService {

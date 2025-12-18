@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { TargetType } from 'src/common/enum';
+import { TargetType } from '../../common/enum/index';
 
 export type CharacterDocument = HydratedDocument<Character>;
 
@@ -22,6 +22,7 @@ export class Character {
 
   @Prop({
     required: true,
+    type: String,
     enum: TargetType,
     index: true,
   })

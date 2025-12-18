@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
-import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('characters')
 export class CharactersController {

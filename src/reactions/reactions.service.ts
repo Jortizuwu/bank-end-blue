@@ -3,16 +3,16 @@ import { Reaction, ReactionDocument } from './entities/reaction.entity';
 import {
   Character,
   CharacterDocument,
-} from 'src/characters/entities/character.entity';
+} from '../characters/entities/character.entity';
 import { Model } from 'mongoose';
-import { ReactionType } from 'src/common/enum';
+import { ReactionType } from '../common/enum';
 import {
   ConflictException,
   HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ExceptionsService } from 'src/common/exceptions/exceptions.service';
+import { ExceptionsService } from '../common/exceptions/exceptions.service';
 
 @Injectable()
 export class ReactionsService {

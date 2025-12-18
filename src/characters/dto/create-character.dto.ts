@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { ReactionType, TargetType } from 'src/common/enum';
+import { ReactionType, TargetType } from '../../common/enum';
 
 export class CreateCharacterDto {
   @IsString()

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ReactionsModule } from 'src/reactions/reactions.module';
+import { ReactionsModule } from '../reactions/reactions.module';
 import { User, UserSchema } from './entities/user.entity';
 import { UsersController } from './user.controller';
 import { UsersService } from './user.service';
-import { ExceptionsModule } from 'src/common/exceptions/exceptions.module';
+import { ExceptionsModule } from '../common/exceptions/exceptions.module';
 
 @Module({
   imports: [

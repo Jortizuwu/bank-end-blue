@@ -1,4 +1,4 @@
-import { TargetType } from 'src/common/enum';
+import { TargetType } from '../../common/enum';
 
 export class CharacterDto {
   id: number | string;
