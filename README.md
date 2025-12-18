@@ -123,19 +123,18 @@ This will start:
 
 **Arquitectura general**
 
-* **Backend**: NestJS
-* **Persistencia**: MongoDB
-* **Dominio principal**:
-
-  * Usuarios
-  * Personajes (Characters)
-  * Reacciones (Likes / Dislikes)
+- **Backend**: NestJS
+- **Persistencia**: MongoDB
+- **Dominio principal**:
+  - Usuarios
+  - Personajes (Characters)
+  - Reacciones (Likes / Dislikes)
 
 **Relaciones clave**
 
-* Un **User** puede tener múltiples **Reactions**.
-* Un **Character** puede recibir múltiples **Reactions**.
-* La relación entre `User` y `Character` se materializa a través de `Reaction`.
+- Un **User** puede tener múltiples **Reactions**.
+- Un **Character** puede recibir múltiples **Reactions**.
+- La relación entre `User` y `Character` se materializa a través de `Reaction`.
 
 ```text
 ┌──────────┐        ┌────────────┐        ┌────────────┐
@@ -145,13 +144,15 @@ This will start:
 
 **Restricciones importantes**
 
-* Un usuario solo puede reaccionar **una vez** a un mismo personaje (`unique index: userId + custom_id`).
+- Un usuario solo puede reaccionar **una vez** a un mismo personaje (`unique index: userId + custom_id`).
+
 ---
+
 ### 2. Diagrama de flujo
-[url de git hub]
 
+![Solution Diagram](https://github.com/Jortizuwu/bank-end-blue/blob/main/image.png?raw=true)
 
-## Puntos no implementados 
+## Puntos no implementados
 
 - **Documentación sobre el funcionamiento del reto:**  
   No fue incluida debido a limitaciones de conocimiento y tiempo en la elaboración de documentación técnica detallada al momento de realizar la prueba.
