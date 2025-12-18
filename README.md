@@ -140,3 +140,51 @@ npm run test:e2e
 ## ✒️ Author
 
 - **Jose Ortiz**
+
+## Consideraciones de construcción y arquitectura
+
+### 1. Diagrama de solución
+
+**Arquitectura general**
+
+* **Backend**: NestJS
+* **Persistencia**: MongoDB
+* **Dominio principal**:
+
+  * Usuarios
+  * Personajes (Characters)
+  * Reacciones (Likes / Dislikes)
+
+**Relaciones clave**
+
+* Un **User** puede tener múltiples **Reactions**.
+* Un **Character** puede recibir múltiples **Reactions**.
+* La relación entre `User` y `Character` se materializa a través de `Reaction`.
+
+```text
+┌──────────┐        ┌────────────┐        ┌────────────┐
+│  User    │ 1 ────<│  Reaction  │>──── 1 │ Character  │
+└──────────┘        └────────────┘        └────────────┘
+```
+
+**Restricciones importantes**
+
+* Un usuario solo puede reaccionar **una vez** a un mismo personaje (`unique index: userId + custom_id`).
+---
+### 2. Diagrama de flujo
+[url de git hub]
+
+
+## Puntos no implementados 
+
+- **Documentación sobre el funcionamiento del reto:**  
+  No fue incluida debido a limitaciones de conocimiento y tiempo en la elaboración de documentación técnica detallada al momento de realizar la prueba.
+
+- **Pruebas unitarias:**  
+  No se implementaron por falta de experiencia suficiente en la creación y configuración de pruebas unitarias automatizadas dentro del alcance del proyecto.
+
+- **Pruebas automatizadas de integración:**  
+  No se desarrollaron debido a limitaciones de conocimiento práctico en la implementación de pruebas de integración automatizadas.
+
+- **Documentación y ejemplos de documentos en MongoDB:**  
+  No se agregaron por falta de conocimiento en la documentación de esquemas y ejemplos de datos en MongoDB en el momento de la prueba.
