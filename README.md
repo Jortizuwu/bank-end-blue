@@ -98,26 +98,6 @@ This will start:
 
 ---
 
-## 🧪 Testing
-
-Run unit tests:
-
-```bash
-yarn test
-# or
-npm run test
-```
-
-Run e2e tests:
-
-```bash
-yarn test:e2e
-# or
-npm run test:e2e
-```
-
----
-
 ## 🛠️ Built With
 
 - **[NestJS](https://nestjs.com/)**
@@ -136,10 +116,6 @@ npm run test:e2e
   Containerized development environment
 
 ---
-
-## ✒️ Author
-
-- **Jose Ortiz**
 
 ## Consideraciones de construcción y arquitectura
 
@@ -188,3 +164,7 @@ npm run test:e2e
 
 - **Documentación y ejemplos de documentos en MongoDB:**  
   No se agregaron por falta de conocimiento en la documentación de esquemas y ejemplos de datos en MongoDB en el momento de la prueba.
+
+## ✒️ Autor
+
+- **Jose Ortiz**
