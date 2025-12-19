@@ -75,7 +75,7 @@ http://localhost:3000/api
 
 ### 🐳 Configuración con Docker (recomendado)
 
-Puedes usar Docker para ejecutar MongoDB y la API localmente.
+Puedes usar Docker para ejecutar MongoDB localmente.
 
 Desde la raíz del proyecto, ejecuta:
 
@@ -85,8 +85,7 @@ docker-compose up
 
 Esto levantará:
 
-* MongoDB
-* API de NestJS
+* MongoDB 
 
 ---
 
