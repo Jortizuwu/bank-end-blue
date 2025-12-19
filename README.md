@@ -73,22 +73,6 @@ http://localhost:3000/api
 
 ---
 
-### 🐳 Configuración con Docker (recomendado)
-
-Puedes usar Docker para ejecutar MongoDB localmente.
-
-Desde la raíz del proyecto, ejecuta:
-
-```bash
-docker-compose up
-```
-
-Esto levantará:
-
-* MongoDB 
-
----
-
 ## 🦴 Estructura de carpetas
 
 ```text
