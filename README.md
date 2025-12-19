@@ -46,10 +46,10 @@ Este proyecto utiliza variables de entorno para configurar la base de datos y lo
 Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
 
 ```env
-MONGODB=mongodb://root:example@localhost:27017/?authSource=admin
-PORT=3000
-HERO_TOKEN=1111111111111111
-JWT_SECRET=supersecretS
+MONGODB=
+PORT=
+HERO_TOKEN=
+JWT_SECRET=
 ```
 
 > ⚠️ **Importante:**
