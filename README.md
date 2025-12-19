@@ -21,7 +21,7 @@ Para ejecutar este proyecto, asegúrate de contar con alguno de los siguientes e
 
 * Clona y configura el front siguiendo las instrucciones de su repositorio:
   👉 **[frontend](https://github.com/Jortizuwu/front-end-blue)**
-* Sigue los pasos indicados tanto en el `README` de este repositorio como en el del backend.
+* Sigue los pasos indicados tanto en el `README` de este repositorio como en el del frontend.
 
 ---
 
