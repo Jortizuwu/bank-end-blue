@@ -17,6 +17,12 @@ Para ejecutar este proyecto, asegúrate de contar con alguno de los siguientes e
 * **[yarn](https://yarnpkg.com/getting-started/install)** (opcional)
 * **[visual studio](https://code.visualstudio.com/)** (opcional)
 
+**front end (opcional)**.
+
+* Clona y configura el front siguiendo las instrucciones de su repositorio:
+  👉 **[frontend](https://github.com/Jortizuwu/front-end-blue)**
+* Sigue los pasos indicados tanto en el `README` de este repositorio como en el del backend.
+
 ---
 
 ## ⚙️ Instalación y ejecución del proyecto
